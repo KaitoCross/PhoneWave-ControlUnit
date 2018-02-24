@@ -31,9 +31,9 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:mitel
 LIBS:mt88xx
-LIBS:PlatineLegacy-cache
+LIBS:mitel
+LIBS:Board_Legacy-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
@@ -1410,11 +1410,6 @@ Wire Wire Line
 Wire Wire Line
 	2050 7350 4450 7350
 Connection ~ 2050 5750
-Wire Wire Line
-	4450 6950 4450 5850
-Wire Wire Line
-	4450 5850 5250 5850
-Connection ~ 5250 5850
 $Comp
 L Conn_01x01 J3
 U 1 1 5A8C2CD8
@@ -1545,4 +1540,8 @@ Wire Wire Line
 Wire Wire Line
 	4150 7050 4150 7150
 Connection ~ 3950 7050
+Wire Wire Line
+	4650 6300 4450 6300
+Wire Wire Line
+	4450 6300 4450 6950
 $EndSCHEMATC
