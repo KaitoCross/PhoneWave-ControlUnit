@@ -1344,7 +1344,7 @@ Wire Wire Line
 Wire Wire Line
 	2400 3200 3300 3200
 Wire Wire Line
-	3300 3200 3300 3050
+	3300 3050 3300 3300
 Connection ~ 3900 5750
 $Comp
 L MPSA42 Q8
@@ -1366,4 +1366,19 @@ Wire Wire Line
 Wire Wire Line
 	3900 2100 3900 1950
 Connection ~ 3900 1500
+$Comp
+L R R1337
+U 1 1 5A91025C
+P 3450 3300
+F 0 "R1337" V 3530 3300 50  0000 C CNN
+F 1 "100k" V 3450 3300 50  0000 C CNN
+F 2 "" V 3380 3300 50  0001 C CNN
+F 3 "" H 3450 3300 50  0001 C CNN
+	1    3450 3300
+	0    -1   -1   0   
+$EndComp
+Connection ~ 3300 3200
+Wire Wire Line
+	3600 3300 3900 3300
+Connection ~ 3900 3300
 $EndSCHEMATC
