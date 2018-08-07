@@ -2,7 +2,7 @@
 Code for the ATmega8 to control the PhoneWave-Projects with 4-bit input given on Ports C0-3 which are read when the interrupt has been triggered by a rising edge signal on Port D2
 
 Board layouts for boards that connect the ATmega8-Pins with the Raspberry Pi, the display, the lights and the turntable.  
-A separate board for your ATmega8 is not included here. I used the MyAVR board light http://shop.myavr.de/index.php?sp=article.sp.php&artID=200084
+A separate board for your ATmega8 is not included here. I used the MyAVR board light http://shop.myavr.com/hardware%20-%20assembly%20kits/myAVR%20Board%20light,%20assembly%20kit.htm?sp=article.sp.php&artID=200084
 
 This code is rather old. It has been designed to convert the output of the MT8870 IC (which translates DTMF signals into binary numbers) into human-readable digits displayed on a 7-segment display (common anode JLDF-4431BHGBD20 930 display) provided by my microwave manufacturer.  
 
