@@ -17,17 +17,17 @@
 uint8_t segcodeB[11];
 bool segcodeD[11];
 uint8_t temp = 0;
-uint8_t darstellzahl[4] = {0,0,0,0};
-uint16_t Zeitwert = 0;
+uint8_t displayedDigit[4] = {0,0,0,0};
+uint16_t TimeInSecs = 0;
 uint8_t displaycounter = 0;
 bool triggermove = false;
 bool reset = false;
 bool countdown = false;
 bool noinput = false;
-uint8_t tzaehler = 0;
+uint8_t timercounter = 0;
 int main(void)
 {
-	//welche Zahl welche leuchtenden Segmente
+	//which digit lights up which segments of the display
 	//			= 0b00gfedcb
 	segcodeB[0] = 0b00011111;
 	segcodeB[1] = 0b00000011;
@@ -66,52 +66,53 @@ int main(void)
 
     while(1)
     {
-		if (triggermove) //move numbers from right to left if new input came
+		if (triggermove) //move digits from right to left if new input came
 		{
-				darstellzahl[0]=darstellzahl[1];
-				darstellzahl[1]=darstellzahl[2];
-				darstellzahl[2]=darstellzahl[3];
-				darstellzahl[3]=temp;
+				displayedDigit[0]=displayedDigit[1];
+				displayedDigit[1]=displayedDigit[2];
+				displayedDigit[2]=displayedDigit[3];
+				displayedDigit[3]=temp;
 				triggermove=false;
 		}
 		if (countdown)
 		{
 			
-			darstellzahl[0] = Zeitwert/1000;
-			darstellzahl[1] = Zeitwert/100-(darstellzahl[0]*10);
-			darstellzahl[2] = Zeitwert/10-((darstellzahl[1]*10)+(darstellzahl[0]*100));
-			darstellzahl[3] = Zeitwert-((darstellzahl[2]*10)+(darstellzahl[1]*100)+(darstellzahl[0]*1000));
+			displayedDigit[0] = TimeInSecs/1000;
+			displayedDigit[1] = TimeInSecs/100-(displayedDigit[0]*10);
+			displayedDigit[2] = TimeInSecs/10-((displayedDigit[1]*10)+(displayedDigit[0]*100));
+			displayedDigit[3] = TimeInSecs-((displayedDigit[2]*10)+(displayedDigit[1]*100)+(displayedDigit[0]*1000));
 			countdown=false;
 		}
 		if (reset)
 		{
 			
-			darstellzahl[0]=0;
-			darstellzahl[1]=0;
-			darstellzahl[2]=0;
-			darstellzahl[3]=0;
+			displayedDigit[0]=0;
+			displayedDigit[1]=0;
+			displayedDigit[2]=0;
+			displayedDigit[3]=0;
 			PORTC = 0b00001111;
 			reset = false;
 		}
-		if (temp<11) //output calculated numbers. destination is multiplexed 7-segments LED Display
+		if (temp<11) //output calculated digits. destination is multiplexed 7-segments LED Display
 		{
-		PORTD=(1<<PD2)|(1<<PD3)|(0<<PD4)|(0<<PD5)|(0<<PD6)|(segcodeD[darstellzahl[0]]<<PD7);
-		PORTB=segcodeB[darstellzahl[0]];
+		PORTD=(1<<PD2)|(1<<PD3)|(0<<PD4)|(0<<PD5)|(0<<PD6)|(segcodeD[displayedDigit[0]]<<PD7);
+		PORTB=segcodeB[displayedDigit[0]];
 		_delay_ms(2);
-		PORTD=(1<<PD2)|(0<<PD3)|(1<<PD4)|(0<<PD5)|(0<<PD6)|(segcodeD[darstellzahl[1]]<<PD7);
-		PORTB=segcodeB[darstellzahl[1]];
+		PORTD=(1<<PD2)|(0<<PD3)|(1<<PD4)|(0<<PD5)|(0<<PD6)|(segcodeD[displayedDigit[1]]<<PD7);
+		PORTB=segcodeB[displayedDigit[1]];
 		_delay_ms(2);
-		PORTD=(1<<PD2)|(0<<PD3)|(0<<PD4)|(1<<PD5)|(0<<PD6)|(segcodeD[darstellzahl[2]]<<PD7);
-		PORTB=segcodeB[darstellzahl[2]];
+		PORTD=(1<<PD2)|(0<<PD3)|(0<<PD4)|(1<<PD5)|(0<<PD6)|(segcodeD[displayedDigit[2]]<<PD7);
+		PORTB=segcodeB[displayedDigit[2]];
 		_delay_ms(2);
-		PORTD=(1<<PD2)|(0<<PD3)|(0<<PD4)|(0<<PD5)|(1<<PD6)|(segcodeD[darstellzahl[3]]<<PD7);
-		PORTB=segcodeB[darstellzahl[3]];
+		PORTD=(1<<PD2)|(0<<PD3)|(0<<PD4)|(0<<PD5)|(1<<PD6)|(segcodeD[displayedDigit[3]]<<PD7);
+		PORTB=segcodeB[displayedDigit[3]];
 		_delay_ms(2);
 		}
     }
 
 }
-ISR(INT0_vect)
+ISR(INT0_vect) //Interrupt triggered by high sighnal on Port that has INT0,
+// use to read the next new number given by the MT8870
 {
 	temp = PINC & 0x0F;
 	if (noinput==false)
@@ -140,13 +141,13 @@ ISR(INT0_vect)
 				for (int n = 0; n < 4; n++)
 				{
 					//Because DTMF 0 is outputted as 10 by MT8870, correct array
-					if (darstellzahl[n]==10)
+					if (displayedDigit[n]==10)
 					{
-						darstellzahl[n] = 0;
+						displayedDigit[n] = 0;
 					}
 				}
-		Zeitwert = darstellzahl[0]*1000+darstellzahl[1]*100+darstellzahl[2]*10+darstellzahl[3];	
-		if (Zeitwert>0)
+		TimeInSecs = displayedDigit[0]*1000+displayedDigit[1]*100+displayedDigit[2]*10+displayedDigit[3];
+		if (TimeInSecs>0)
 		{
 			TIMSK|=(1<<TOIE0);
 			PORTC |=(1<<PC4);
@@ -163,18 +164,18 @@ ISR(INT0_vect)
 }
 ISR(TIMER0_OVF_vect)
 {
-	tzaehler++;
-	if (tzaehler == 40) //when 1 sec passed
+	timercounter++;
+	if (timercounter == 40) //when 1 sec passed
 	{
-		Zeitwert = Zeitwert-1;
-		if (Zeitwert<=0)
+		TimeInSecs = TimeInSecs-1;
+		if (TimeInSecs<=0)
 		{
 			TIMSK=(0<<TOIE0);
 			noinput=false;
 			PORTC = 0b00001111;
 		}
 		countdown = true;
-		tzaehler = 0;
+		timercounter = 0;
 	}
 	TCNT0 = 256-90;
 }
