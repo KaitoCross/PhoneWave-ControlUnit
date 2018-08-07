@@ -76,7 +76,7 @@ int main(void)
 		}
 		if (countdown)
 		{
-			
+			//displayedDigit[0] for the first left display, displayedDigit[3] for the one at the very right position
 			displayedDigit[0] = TimeInSecs/1000;
 			displayedDigit[1] = TimeInSecs/100-(displayedDigit[0]*10);
 			displayedDigit[2] = TimeInSecs/10-((displayedDigit[1]*10)+(displayedDigit[0]*100));
